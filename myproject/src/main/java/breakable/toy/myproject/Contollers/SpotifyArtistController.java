@@ -7,8 +7,8 @@ import breakable.toy.myproject.Services.SpotifyApiService;
 import java.util.List;
 import java.util.Map;
 
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
-@RequestMapping("/artists")
 public class SpotifyArtistController {
 
     private final SpotifyApiService spotifyApiService;
@@ -17,13 +17,13 @@ public class SpotifyArtistController {
         this.spotifyApiService = spotifyApiService;
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/artists/{id}")
     public ResponseEntity<Map> getArtist(@PathVariable String id) {
         Map artist = spotifyApiService.getArtist(id);
         return ResponseEntity.ok(artist); 
     }
 
-    @GetMapping("/top")
+    @GetMapping("/me/top/artists")
     public ResponseEntity<List<Map>> getTopArtists() {
         List<Map> topArtists = spotifyApiService.getTopArtists();
         return ResponseEntity.ok(topArtists);  
@@ -56,6 +56,12 @@ public class SpotifyArtistController {
     @GetMapping("/related/artists/{id}")
     public ResponseEntity<Map> relatedArtists(@PathVariable String id) {
         Map albumDetails = spotifyApiService.getRelatedArtists(id);
+        return ResponseEntity.ok(albumDetails);
+    }
+
+    @GetMapping("/playlist/{id}")
+    public ResponseEntity<Map> playlist(@PathVariable String id) {
+        Map albumDetails = spotifyApiService.getPlaylistDetail(id);
         return ResponseEntity.ok(albumDetails);
     }
 }

@@ -35,7 +35,7 @@ public class SpotifyApiService {
     }
 
     public List<Map> getTopArtists() {
-        String url = "https://api.spotify.com/v1/me/top/artists?limit=5";
+        String url = "https://api.spotify.com/v1/me/top/artists?limit=10";
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + authService.getAccessToken());
@@ -74,7 +74,7 @@ public class SpotifyApiService {
 
 
     public Map search(String query) {
-        String url = "https://api.spotify.com/v1/search?q=" + query + "&type=artist,album,track,playlist&limit=10";
+        String url = "https://api.spotify.com/v1/search?q=" + query + "&type=artist,album,track,playlist&limit=3";
         
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
@@ -93,7 +93,7 @@ public class SpotifyApiService {
     }
 
     public Map getArtistAlbum(String id) {
-        String url = "https://api.spotify.com/v1/artists/"+id+"/albums?limit=10";
+        String url = "https://api.spotify.com/v1/artists/"+id+"/albums?limit=5";
         
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
@@ -132,6 +132,24 @@ public class SpotifyApiService {
 
     public Map getRelatedArtists(String id) {
         String url = "https://api.spotify.com/v1/artists/"+id+"/related-artists";
+        
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + authService.getAccessToken());
+
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+        ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.GET, entity, Map.class);
+
+        if (response.getStatusCode() == HttpStatus.UNAUTHORIZED) {
+            authService.refreshToken();
+            headers.set("Authorization", "Bearer " + authService.getAccessToken());
+            response = restTemplate.exchange(url, HttpMethod.GET, entity, Map.class);
+        }
+
+        return response.getBody();  
+    }
+    public Map getPlaylistDetail(String id) {
+        String url = "https://api.spotify.com/v1/playlists/"+id+"";
         
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
